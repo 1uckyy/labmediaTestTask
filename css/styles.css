@@ -1,0 +1,11 @@
+body {
+    margin: 0;
+}
+
+.text_cell {
+    padding-right: 30px;
+}
+
+.selection_cell {
+    padding-bottom: 20px;
+}
