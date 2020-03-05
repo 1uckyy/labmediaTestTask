@@ -23,16 +23,15 @@ button {
 /*modal wnd*/
 .modal {
     position: absolute;
-    top: 30%;
+    top: 20%;
     left: 50%;
     transform: translateX(-50%);
     z-index: 3;
 
-    width: 25%;
-    height: 40%;
+    width: 500px;
 
     background-color: white;
-    border: solid 2px black;
+    border: solid 1.5px black;
 }
 
 .gray_screen_modal {
@@ -47,17 +46,33 @@ button {
     height: 100%;
 }
 
-.title_modal {
+.head_modal {
+    position: relative;
+
     margin-left: 25px;
-    margin-top: 5px;
+    margin-top: 2px;
 }
 
 .choose_container_modal {
-    border: solid 2px black;
-    margin: 15px 25px;
-    height: 73%;
+    border: solid 1.5px black;
+    margin: 20px 25px;
+    height: 350px;
 }
 
 .close_btn_modal {
     position: absolute;
+    right: 5px;
+    border: 0;
+}
+
+.controls_modal {
+    margin: 0 25px 20px 25px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn_modal {
+    width: 85px;
+    height: 21px;
+    margin-left: 15px;
 }
