@@ -9,6 +9,7 @@ button {
     border-width: 1px;
     cursor: pointer;
     padding: 3px;
+    outline: none;
 }
 
 /*table*/
@@ -61,6 +62,7 @@ button {
 
 .close_btn_modal {
     position: absolute;
+    z-index: 4;
     right: 5px;
     border: 0;
 }

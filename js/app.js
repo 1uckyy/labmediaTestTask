@@ -11,5 +11,10 @@ $(function() {
         $('.controls_inter_modal').append('<button class="btn_modal">Отмена</button>');
 
         $('body').append('<div class="gray_screen_modal"></div>');
+
+        $(".close_btn_modal").click(function(){
+            $('.modal').remove();
+            $('.gray_screen_modal').remove();
+        });
     });
 });
