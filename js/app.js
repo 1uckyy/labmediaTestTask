@@ -1,5 +1,14 @@
-"use strict"
+//"use strict"
 var choices_ids = [];
+
+function delete_choice(choice_id) {
+    $('.btn_X_'+choice_id).remove();
+    $('.text_selection_'+choice_id).remove();
+
+    choices_ids.splice(choices_ids.findIndex(function(elem){
+        return elem == choice_id;
+    }),1);
+}
 
 $(function() {
     $(".choose_employee_btn").click(function(){
@@ -58,7 +67,7 @@ $(function() {
             //ok btn
             $(".ok_btn_modal").click(function(){
                 if(clicked_id != null && !choices_ids.find(function(elem){return elem==clicked_id})) {
-                    $('.employee_selection_cell').append('<div><div class="text_selection">' + persons[clicked_id].lastname + ' ' + persons[clicked_id].middlename + ' ' + persons[clicked_id].firstname + '</div><button class="btn_X asd">X</button><div class="hidden_index">' + choices_ids.length + '</div></div>');
+                    $('.employee_selection_cell').append('<div><div class="text_selection text_selection_'+ clicked_id +'">' + persons[clicked_id].lastname + ' ' + persons[clicked_id].middlename + ' ' + persons[clicked_id].firstname + '</div><button class="btn_X btn_X_'+ clicked_id +'" onclick="delete_choice(' + clicked_id + ')">X</button></div>');
                     choices_ids.push(clicked_id);
                 }
                 $('.modal').remove();

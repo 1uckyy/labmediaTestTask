@@ -30,10 +30,6 @@ button {
     margin-left: 5px;
 }
 
-.hidden_index {
-    display: none;
-}
-
 /*modal wnd*/
 .modal {
     position: absolute;
