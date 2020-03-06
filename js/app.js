@@ -1,20 +1,18 @@
-//"use strict"
-var choices_ids = [];
-
-function delete_choice(choice_id) {
-    $('.btn_X_'+choice_id).remove();
-    $('.text_selection_'+choice_id).remove();
-
-    choices_ids.splice(choices_ids.findIndex(function(elem){
-        return elem == choice_id;
-    }),1);
-}
+"use strict"
+var employee_prev_id = null;
+var position_prev_id = null;
+var organization_prev_id = null;
+var subdivision_prev_id = null;
+var clicked_id = null;
+var helper_id = null;
 
 $(function() {
-    $(".choose_employee_btn").click(function(){
-        //modal wnd markup
+    /**
+     * Modal wnd markup.
+    */
+    function general_modal(text_head) {
         $('body').append('<div class="modal"></div>');
-        $('.modal').append('<div class="head_modal">Заголовок</div>');
+        $('.modal').append('<div class="head_modal">' + text_head + '</div>');
         $('.head_modal').append('<button class="close_btn_modal">X</button>');
         $('.modal').append('<div class="choose_container_modal"></div>');
         $('.choose_container_modal').append('<table class="choose_table_modal"></table>');
@@ -24,57 +22,12 @@ $(function() {
         $('.controls_inter_modal').append('<button class="btn_modal cancel_btn_modal">Отмена</button>');
 
         $('body').append('<div class="gray_screen_modal"></div>');
+    }
 
-        //data for modal wnd
-        $.getJSON("../data/persons.json", function(persons) {
-            //array sort by lastname
-            persons.sort(function (a, b) {
-                if (a.lastname > b.lastname) {
-                    return 1;
-                }
-                if (a.lastname < b.lastname) {
-                    return -1;
-                }
-                return 0;
-            });
-
-            //fill modal
-            for(let i=0; i<persons.length; i++) {
-                $('.choose_table_modal').append('<tr id=' + i + '><td>' + persons[i].lastname + '</td><td>' + persons[i].middlename + '</td><td>' + persons[i].firstname + '</td><td>' + persons[i].birthday + '</td></tr>');
-            }
-
-            //gray bg-clr choosed persons
-            for(let i = 0; i<choices_ids.length; i++) {
-                $('.choose_table_modal > #' + choices_ids[i]).css('background-color', 'lightgreen');
-            }
-            
-            var prev_id = null;
-            var clicked_id = null;
-            //choose row
-            $('.choose_table_modal > tr').click(function(){
-                clicked_id = $(this).attr('id');
-                if(!choices_ids.find(function(elem){return elem==clicked_id})) {
-                    $('.choose_table_modal > #' + clicked_id).css('background-color', 'gray');
-
-                    if(prev_id != null) {
-                        $('.choose_table_modal > #' + prev_id).css('background-color', 'white');
-                    }
-
-                    prev_id = clicked_id;
-                }
-            });
-
-            //ok btn
-            $(".ok_btn_modal").click(function(){
-                if(clicked_id != null && !choices_ids.find(function(elem){return elem==clicked_id})) {
-                    $('.employee_selection_cell').append('<div><div class="text_selection text_selection_'+ clicked_id +'">' + persons[clicked_id].lastname + ' ' + persons[clicked_id].middlename + ' ' + persons[clicked_id].firstname + '</div><button class="btn_X btn_X_'+ clicked_id +'" onclick="delete_choice(' + clicked_id + ')">X</button></div>');
-                    choices_ids.push(clicked_id);
-                }
-                $('.modal').remove();
-                $('.gray_screen_modal').remove();
-            });
-        });
-
+    /**
+     * Close and cancel buttons.
+    */
+    function cancel_btns() {
         //close btn
         $(".close_btn_modal").click(function(){
             $('.modal').remove();
@@ -86,5 +39,186 @@ $(function() {
             $('.modal').remove();
             $('.gray_screen_modal').remove();
         });
+    }
+
+    /**
+     * Sorting an array by desired field.
+     * @param {Array} array array for sort
+     * @param {String} sort_by value which array is sorted
+     */
+    function arr_sort(array, sort_by) {
+        array.sort(function (a, b) {
+            if (a[sort_by] > b[sort_by]) {
+                return 1;
+            }
+            if (a[sort_by] < b[sort_by]) {
+                return -1;
+            }
+            return 0;
+        });
+    }
+
+    /**
+     * Fill modal window.
+     * @param {Array} arr array with data
+     */
+    function fill_modal(arr) {
+        for(let i=0; i<arr.length; i++) {
+            let info;
+            for(let j=1; j<arguments.length; j++)
+                info += '<td>' + arr[i][arguments[j]] + '</td>'
+            $('.choose_table_modal').append('<tr id=' + i + '>' + info + '</tr>');
+        }
+    }
+
+    /**
+     * Choose row
+     */
+    function choose_row(prev_id) {
+        $('.choose_table_modal > #' + prev_id).css('background-color', 'lightgreen');
+
+        $('.choose_table_modal > tr').click(function(){
+            clicked_id = $(this).attr('id');
+            if(clicked_id != prev_id)
+                $('.choose_table_modal > #' + clicked_id).css('background-color', 'gray');
+
+            if(helper_id != null && prev_id != clicked_id)
+                $('.choose_table_modal > #' + helper_id).css('background-color', 'white');
+            
+            if(prev_id != clicked_id)
+                helper_id = clicked_id;
+        });
+    }
+
+    //employee
+    $(".choose_employee_btn").click(function(){
+        general_modal('Выбор сотрудника');
+
+        //data for modal wnd
+        $.getJSON("../data/persons.json", function(persons) {
+            arr_sort(persons, 'lastname');
+
+            fill_modal(persons, 'lastname', 'middlename', 'firstname', 'birthday');
+
+            clicked_id = null;
+            helper_id = null;
+            choose_row(employee_prev_id);
+
+            //ok btn
+            $(".ok_btn_modal").click(function(){
+                if(clicked_id != null) {
+                    $('.employee_selection_cell').empty();
+                    $('.employee_selection_cell').append('<div><div class="text_selection">' + persons[clicked_id].lastname + ' ' + persons[clicked_id].middlename + ' ' + persons[clicked_id].firstname + '</div><button class="btn_X btn_X_employee">X</button></div>');
+                    employee_prev_id = clicked_id;
+                    $(".btn_X_employee").click(function(){
+                        $('.employee_selection_cell').empty();
+                        employee_prev_id = null;
+                    });
+                }
+                $('.modal').remove();
+                $('.gray_screen_modal').remove();
+            });
+        });
+
+        cancel_btns();
+    });
+
+    //position
+    $(".choose_position_btn").click(function() {
+        general_modal('Выбор должности');
+
+        //data for modal wnd
+        $.getJSON("../data/positions.json", function(positions) {
+            arr_sort(positions, 'name');
+
+            fill_modal(positions, 'name', 'min_age', 'max_age');
+
+            clicked_id = null;
+            helper_id = null;
+            choose_row(position_prev_id);
+
+            //ok btn
+            $(".ok_btn_modal").click(function(){
+                if(clicked_id != null) {
+                    $('.position_selection_cell').empty();
+                    $('.position_selection_cell').append('<div><div class="text_selection">' + positions[clicked_id].name + '</div><button class="btn_X btn_X_position">X</button></div>');
+                    position_prev_id = clicked_id;
+                    $(".btn_X_position").click(function(){
+                        $('.position_selection_cell').empty();
+                        position_prev_id = null;
+                    });
+                }
+                $('.modal').remove();
+                $('.gray_screen_modal').remove();
+            });
+        });
+
+        cancel_btns();
+    });
+
+    //organization
+    $(".choose_organization_btn").click(function() {
+        general_modal('Выбор организации');
+
+        //data for modal wnd
+        $.getJSON("../data/orgs.json", function(organizations) {
+            arr_sort(organizations, 'name');
+
+            fill_modal(organizations, 'name', 'country');
+
+            clicked_id = null;
+            helper_id = null;
+            choose_row(organization_prev_id);
+
+            //ok btn
+            $(".ok_btn_modal").click(function(){
+                if(clicked_id != null) {
+                    $('.organization_selection_cell').empty();
+                    $('.organization_selection_cell').append('<div><div class="text_selection">' + organizations[clicked_id].name + '</div><button class="btn_X btn_X_organization">X</button></div>');
+                    organization_prev_id = clicked_id;
+                    $(".btn_X_organization").click(function(){
+                        $('.organization_selection_cell').empty();
+                        organization_prev_id = null;
+                    });
+                }
+                $('.modal').remove();
+                $('.gray_screen_modal').remove();
+            });
+        });
+
+        cancel_btns();
+    });
+
+    //subdivision
+    $(".choose_subdivision_btn").click(function() {
+        general_modal('Выбор подразделения');
+
+        //data for modal wnd
+        $.getJSON("../data/subs.json", function(subdivisions) {
+            arr_sort(subdivisions, 'name');
+
+            fill_modal(subdivisions, 'name', 'org_id');
+
+            clicked_id = null;
+            helper_id = null;
+            choose_row(subdivision_prev_id);
+
+            //ok btn
+            $(".ok_btn_modal").click(function(){
+                if(clicked_id != null) {
+                    $('.subdivision_selection_cell').empty();
+                    $('.subdivision_selection_cell').append('<div><div class="text_selection">' + subdivisions[clicked_id].name + '</div><button class="btn_X btn_X_subdivision">X</button></div>');
+                    subdivision_prev_id = clicked_id;
+                    $(".btn_X_subdivision").click(function(){
+                        $('.subdivision_selection_cell').empty();
+                        subdivision_prev_id = null;
+                    });
+                }
+                $('.modal').remove();
+                $('.gray_screen_modal').remove();
+            });
+        });
+
+        cancel_btns();
     });
 });
