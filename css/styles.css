@@ -18,7 +18,20 @@ button {
 }
 
 .selection_cell {
-    padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.text_selection {
+    display: inline;
+}
+
+.btn_X {
+    margin-left: 5px;
+}
+
+.hidden_index {
+    display: none;
 }
 
 /*modal wnd*/
@@ -61,8 +74,21 @@ button {
     overflow: auto;
 }
 
+.choose_table_modal {
+    border-collapse: collapse;
+    width: 100%;
+}
+
 .choose_table_modal td {
     padding-left: 13px;
+}
+
+.choose_table_modal tr {
+    cursor: pointer;
+}
+
+.choose_table_modal tr:hover {
+    background-color: gray;
 }
 
 .close_btn_modal {
