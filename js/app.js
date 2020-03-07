@@ -1,6 +1,9 @@
 "use strict"
 var employee_prev_id = null;
+var employee_age = null;
 var position_prev_id = null;
+var position_min_age = null;
+var position_max_age = null;
 var organization_prev_id = null;
 var subdivision_prev_id = null;
 var clicked_id = null;
@@ -90,6 +93,25 @@ $(function() {
         });
     }
 
+    /**
+     * Calculating age.
+     * @param {String} value 
+     */
+    function calc_age(value) {
+        var arr_date = value.split('.');
+        var person_mounth = parseInt(arr_date[1], 10);
+        var now_mounth = new Date().getMonth()+1;
+        var age = new Date().getFullYear() - parseInt(arr_date[2], 10);
+        if(now_mounth < person_mounth)
+            age -= 1;
+        else if(now_mounth == person_mounth) {
+            if(new Date().getDate() < parseInt(arr_date[0],10))
+                age -= 1;
+        }
+
+        return age;
+    }
+
     //employee
     $(".choose_employee_btn").click(function(){
         general_modal('Выбор сотрудника');
@@ -107,12 +129,23 @@ $(function() {
             //ok btn
             $(".ok_btn_modal").click(function(){
                 if(clicked_id != null) {
+
+                    //check age
+                    if(position_min_age) {
+                        let emp_age = calc_age(persons[clicked_id].birthday);
+                        if(emp_age<position_min_age || emp_age>position_max_age)
+                            console.log('bad age');
+                    }
+
+                    
                     $('.employee_selection_cell').empty();
                     $('.employee_selection_cell').append('<div><div class="text_selection">' + persons[clicked_id].lastname + ' ' + persons[clicked_id].middlename + ' ' + persons[clicked_id].firstname + '</div><button class="btn_X btn_X_employee">X</button></div>');
                     employee_prev_id = clicked_id;
+                    employee_age = calc_age(persons[clicked_id].birthday);
                     $(".btn_X_employee").click(function(){
                         $('.employee_selection_cell').empty();
                         employee_prev_id = null;
+                        employee_age = null;
                     });
                 }
                 $('.modal').remove();
@@ -139,13 +172,24 @@ $(function() {
 
             //ok btn
             $(".ok_btn_modal").click(function(){
+
+                //check age
+                if(employee_prev_id) {
+                    if(positions[clicked_id].min_age > employee_age || positions[clicked_id].max_age < employee_age)
+                        console.log("bad position");
+                }
+
                 if(clicked_id != null) {
                     $('.position_selection_cell').empty();
                     $('.position_selection_cell').append('<div><div class="text_selection">' + positions[clicked_id].name + '</div><button class="btn_X btn_X_position">X</button></div>');
                     position_prev_id = clicked_id;
+                    position_min_age = positions[clicked_id].min_age;
+                    position_max_age = positions[clicked_id].max_age;
                     $(".btn_X_position").click(function(){
                         $('.position_selection_cell').empty();
                         position_prev_id = null;
+                        position_min_age = null;
+                        position_max_age = null;
                     });
                 }
                 $('.modal').remove();
