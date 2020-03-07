@@ -105,3 +105,24 @@ button {
     height: 21px;
     margin-left: 15px;
 }
+
+/*Modal for modal*/
+.mod_gray_screen {
+    z-index: 5;
+}
+
+.mod_modal {
+    z-index: 6;
+    width: 400px;
+    text-align: center;
+}
+
+.text_scnd_modal {
+    padding: 25px;
+}
+
+.btn_scnd_modal {
+    width: 85px;
+    height: 21px;
+    margin: 0 5px 10px;
+}

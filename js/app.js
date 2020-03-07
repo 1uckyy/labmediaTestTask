@@ -133,23 +133,62 @@ $(function() {
                     //check age
                     if(position_min_age) {
                         let emp_age = calc_age(persons[clicked_id].birthday);
-                        if(emp_age<position_min_age || emp_age>position_max_age)
-                            console.log('bad age');
-                    }
+                        if(emp_age<position_min_age || emp_age>position_max_age) {
+                            $('.modal').append('<div class="gray_screen_modal mod_gray_screen"></div>');
+                            $('.modal').append('<div class="modal mod_modal"><div class="text_scnd_modal">Выбранный сотрудник не подходит по возрасту. Вы уверены, что хотите выбрать этого сотрудника?</div><button class="btn_scnd_modal accept_scnd_modal">ОК</button><button class="btn_scnd_modal btn_modal close_scnd_modal">Отмена</button></div>');
+                            
+                            $('.close_scnd_modal').click(function(){
+                                $('.mod_gray_screen').remove();
+                                $('.mod_modal').remove();
 
-                    
-                    $('.employee_selection_cell').empty();
-                    $('.employee_selection_cell').append('<div><div class="text_selection">' + persons[clicked_id].lastname + ' ' + persons[clicked_id].middlename + ' ' + persons[clicked_id].firstname + '</div><button class="btn_X btn_X_employee">X</button></div>');
-                    employee_prev_id = clicked_id;
-                    employee_age = calc_age(persons[clicked_id].birthday);
-                    $(".btn_X_employee").click(function(){
+                                $('.choose_table_modal > #' + clicked_id).css('background-color', 'white');
+                                clicked_id = null;
+                                helper_id = null;
+                            });
+                            
+                            $('.accept_scnd_modal').click(function(){
+                                $('.employee_selection_cell').empty();
+                                $('.employee_selection_cell').append('<div><div class="text_selection">' + persons[clicked_id].lastname + ' ' + persons[clicked_id].middlename + ' ' + persons[clicked_id].firstname + '</div><button class="btn_X btn_X_employee">X</button></div>');
+                                employee_prev_id = clicked_id;
+                                employee_age = calc_age(persons[clicked_id].birthday);
+                                $(".btn_X_employee").click(function(){
+                                    $('.employee_selection_cell').empty();
+                                    employee_prev_id = null;
+                                    employee_age = null;
+                                });
+                                $('.modal').remove();
+                                $('.gray_screen_modal').remove();
+                            });
+                        } else {
+                            $('.employee_selection_cell').empty();
+                            $('.employee_selection_cell').append('<div><div class="text_selection">' + persons[clicked_id].lastname + ' ' + persons[clicked_id].middlename + ' ' + persons[clicked_id].firstname + '</div><button class="btn_X btn_X_employee">X</button></div>');
+                            employee_prev_id = clicked_id;
+                            employee_age = calc_age(persons[clicked_id].birthday);
+                            $(".btn_X_employee").click(function(){
+                                $('.employee_selection_cell').empty();
+                                employee_prev_id = null;
+                                employee_age = null;
+                            });
+                            $('.modal').remove();
+                            $('.gray_screen_modal').remove();
+                        }
+                    } else {
                         $('.employee_selection_cell').empty();
-                        employee_prev_id = null;
-                        employee_age = null;
-                    });
+                            $('.employee_selection_cell').append('<div><div class="text_selection">' + persons[clicked_id].lastname + ' ' + persons[clicked_id].middlename + ' ' + persons[clicked_id].firstname + '</div><button class="btn_X btn_X_employee">X</button></div>');
+                            employee_prev_id = clicked_id;
+                            employee_age = calc_age(persons[clicked_id].birthday);
+                            $(".btn_X_employee").click(function(){
+                                $('.employee_selection_cell').empty();
+                                employee_prev_id = null;
+                                employee_age = null;
+                            });
+                            $('.modal').remove();
+                            $('.gray_screen_modal').remove();
+                    }
+                }  else {
+                    $('.modal').remove();
+                    $('.gray_screen_modal').remove();
                 }
-                $('.modal').remove();
-                $('.gray_screen_modal').remove();
             });
         });
 
@@ -172,28 +211,72 @@ $(function() {
 
             //ok btn
             $(".ok_btn_modal").click(function(){
-
-                //check age
-                if(employee_prev_id) {
-                    if(positions[clicked_id].min_age > employee_age || positions[clicked_id].max_age < employee_age)
-                        console.log("bad position");
-                }
-
                 if(clicked_id != null) {
-                    $('.position_selection_cell').empty();
-                    $('.position_selection_cell').append('<div><div class="text_selection">' + positions[clicked_id].name + '</div><button class="btn_X btn_X_position">X</button></div>');
-                    position_prev_id = clicked_id;
-                    position_min_age = positions[clicked_id].min_age;
-                    position_max_age = positions[clicked_id].max_age;
-                    $(".btn_X_position").click(function(){
+
+                    //check age
+                    if(employee_prev_id) {
+                        if(positions[clicked_id].min_age > employee_age || positions[clicked_id].max_age < employee_age) {
+                            $('.modal').append('<div class="gray_screen_modal mod_gray_screen"></div>');
+                            $('.modal').append('<div class="modal mod_modal"><div class="text_scnd_modal">Выбранная должность не подходит по возрасту сотруднику. Вы уверены, что хотите выбрать эту должность?</div><button class="btn_scnd_modal accept_scnd_modal">ОК</button><button class="btn_scnd_modal close_scnd_modal">Отмена</button></div>');
+                            
+                            $('.close_scnd_modal').click(function(){
+                                $('.mod_gray_screen').remove();
+                                $('.mod_modal').remove();
+
+                                $('.choose_table_modal > #' + clicked_id).css('background-color', 'white');
+                                clicked_id = null;
+                                helper_id = null;
+                            });
+                            
+                            $('.accept_scnd_modal').click(function(){
+                                $('.position_selection_cell').empty();
+                                $('.position_selection_cell').append('<div><div class="text_selection">' + positions[clicked_id].name + '</div><button class="btn_X btn_X_position">X</button></div>');
+                                position_prev_id = clicked_id;
+                                position_min_age = positions[clicked_id].min_age;
+                                position_max_age = positions[clicked_id].max_age;
+                                $(".btn_X_position").click(function(){
+                                    $('.position_selection_cell').empty();
+                                    position_prev_id = null;
+                                    position_min_age = null;
+                                    position_max_age = null;
+                                });
+                                $('.modal').remove();
+                                $('.gray_screen_modal').remove();
+                            });
+                        } else {
+                            $('.position_selection_cell').empty();
+                            $('.position_selection_cell').append('<div><div class="text_selection">' + positions[clicked_id].name + '</div><button class="btn_X btn_X_position">X</button></div>');
+                            position_prev_id = clicked_id;
+                            position_min_age = positions[clicked_id].min_age;
+                            position_max_age = positions[clicked_id].max_age;
+                            $(".btn_X_position").click(function(){
+                                $('.position_selection_cell').empty();
+                                position_prev_id = null;
+                                position_min_age = null;
+                                position_max_age = null;
+                            });
+                            $('.modal').remove();
+                            $('.gray_screen_modal').remove();
+                        }
+                    } else {
                         $('.position_selection_cell').empty();
-                        position_prev_id = null;
-                        position_min_age = null;
-                        position_max_age = null;
-                    });
+                        $('.position_selection_cell').append('<div><div class="text_selection">' + positions[clicked_id].name + '</div><button class="btn_X btn_X_position">X</button></div>');
+                        position_prev_id = clicked_id;
+                        position_min_age = positions[clicked_id].min_age;
+                        position_max_age = positions[clicked_id].max_age;
+                        $(".btn_X_position").click(function(){
+                            $('.position_selection_cell').empty();
+                            position_prev_id = null;
+                            position_min_age = null;
+                            position_max_age = null;
+                        });
+                        $('.modal').remove();
+                        $('.gray_screen_modal').remove();
+                    }
+                } else {
+                    $('.modal').remove();
+                    $('.gray_screen_modal').remove();
                 }
-                $('.modal').remove();
-                $('.gray_screen_modal').remove();
             });
         });
 
