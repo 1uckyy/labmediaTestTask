@@ -312,6 +312,20 @@ $(function() {
         $.getJSON("../data/subs.json", function(subdivisions) {
             arr_sort(subdivisions, 'name');
 
+            //ajax for async
+            $.ajax({
+                url: "../data/orgs.json",
+                dataType: 'json',
+                async: false,
+                success: function(organizations) {
+                    for(var i =0; i<subdivisions.length; i++) {
+                        subdivisions[i]['org_id'] = organizations.find(function(elem){
+                            return elem['id'] == subdivisions[i]['org_id'];
+                        })['name'];
+                    }
+                }
+            });
+
             fill_modal(subdivisions, 'name', 'org_id');
 
             clicked_id = null;
