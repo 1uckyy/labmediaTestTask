@@ -165,7 +165,7 @@ $(function() {
             $('.mod_gray_screen').remove();
             $('.mod_modal').remove();
 
-            $('.choose_table_modal > #' + clicked_id).css('background-color', 'white');
+            $('.choose_table_modal > #' + helper_id).removeClass("choose_row");
             clicked_id = null;
             helper_id = null;
         });
