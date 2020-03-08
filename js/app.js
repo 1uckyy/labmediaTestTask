@@ -319,9 +319,11 @@ $(function() {
                 async: false,
                 success: function(organizations) {
                     for(var i =0; i<subdivisions.length; i++) {
-                        subdivisions[i]['org_id'] = organizations.find(function(elem){
-                            return elem['id'] == subdivisions[i]['org_id'];
-                        })['name'];
+                        for(var j=0; j<organizations.length; j++)
+                        {
+                            if(organizations[j]['id']==subdivisions[i]['org_id'])
+                            subdivisions[i]['org_id'] = organizations[j]['name'];
+                        }
                     }
                 }
             });
