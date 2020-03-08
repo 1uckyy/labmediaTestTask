@@ -76,7 +76,7 @@ $(function() {
     }
 
     /**
-     * Choose word.
+     * Choose row.
      * @param {Number} prev_id currently picked id
      */
     function choose_row(prev_id) {
@@ -85,10 +85,10 @@ $(function() {
         $('.choose_table_modal > tr').click(function(){
             clicked_id = $(this).attr('id');
             if(clicked_id != prev_id)
-                $('.choose_table_modal > #' + clicked_id).css('background-color', 'gray');
+                $('.choose_table_modal > #' + clicked_id).addClass("choose_row");
 
             if(helper_id != null)
-                $('.choose_table_modal > #' + helper_id).css('background-color', 'white');
+                $('.choose_table_modal > #' + helper_id).removeClass("choose_row");
             
             if(prev_id != clicked_id)
                 helper_id = clicked_id;

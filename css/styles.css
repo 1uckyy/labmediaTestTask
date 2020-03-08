@@ -111,6 +111,10 @@ button {
     margin-left: 15px;
 }
 
+.choose_row {
+    background-color: gray;
+}
+
 /*Modal for modal*/
 .mod_gray_screen {
     z-index: 5;
