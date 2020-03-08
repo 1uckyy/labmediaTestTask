@@ -11,8 +11,9 @@ var helper_id = null;
 
 $(function() {
     /**
-     * Modal wnd markup.
-    */
+     * Modal window markup.
+     * @param {String} text_head text of head modal window
+     */
     function general_modal(text_head) {
         $('body').append('<div class="modal"></div>');
         $('.modal').append('<div class="head_modal">' + text_head + '</div>');
@@ -75,7 +76,8 @@ $(function() {
     }
 
     /**
-     * Choose row
+     * Choose word.
+     * @param {Number} prev_id currently picked id
      */
     function choose_row(prev_id) {
         $('.choose_table_modal > #' + prev_id).css('background-color', 'lightgreen');
@@ -85,7 +87,7 @@ $(function() {
             if(clicked_id != prev_id)
                 $('.choose_table_modal > #' + clicked_id).css('background-color', 'gray');
 
-            if(helper_id != null && prev_id != clicked_id)
+            if(helper_id != null)
                 $('.choose_table_modal > #' + helper_id).css('background-color', 'white');
             
             if(prev_id != clicked_id)
@@ -95,7 +97,7 @@ $(function() {
 
     /**
      * Calculating age.
-     * @param {String} value 
+     * @param {String} value man birthday 
      */
     function calc_age(value) {
         var arr_date = value.split('.');
@@ -110,6 +112,67 @@ $(function() {
         }
 
         return age;
+    }
+
+    /**
+     * Add employee selection cell.
+     * @param {Array} persons 
+     */
+    function add_employee_sel(persons) {
+        $('.employee_selection_cell').empty();
+        $('.employee_selection_cell').append('<div><div class="text_selection">' + persons[clicked_id].lastname + ' ' + persons[clicked_id].middlename + ' ' + persons[clicked_id].firstname + '</div><button class="btn_X btn_X_employee">X</button></div>');
+        employee_prev_id = clicked_id;
+        employee_age = calc_age(persons[clicked_id].birthday);
+        $(".btn_X_employee").click(function(){
+            $('.employee_selection_cell').empty();
+            employee_prev_id = null;
+            employee_age = null;
+        });
+        $('.modal').remove();
+        $('.gray_screen_modal').remove();
+    }
+    
+    /**
+     * Add positions selection cell.
+     * @param {Array} positions 
+     */
+    function add_position_sel(positions) {
+        $('.position_selection_cell').empty();
+        $('.position_selection_cell').append('<div><div class="text_selection">' + positions[clicked_id].name + '</div><button class="btn_X btn_X_position">X</button></div>');
+        position_prev_id = clicked_id;
+        position_min_age = positions[clicked_id].min_age;
+        position_max_age = positions[clicked_id].max_age;
+        $(".btn_X_position").click(function(){
+            $('.position_selection_cell').empty();
+            position_prev_id = null;
+            position_min_age = null;
+            position_max_age = null;
+        });
+        $('.modal').remove();
+        $('.gray_screen_modal').remove();
+    }
+
+    /**
+     * Creating second modal.
+     * @param {String} scnd_modal_text text of second modal window
+     * @param {function} callback logic for 'ok' button
+     */
+    function secondModal(scnd_modal_text, callback) {
+        $('.modal').append('<div class="gray_screen_modal mod_gray_screen"></div>');
+        $('.modal').append('<div class="modal mod_modal"><div class="text_scnd_modal">'+scnd_modal_text+'</div><button class="btn_scnd_modal accept_scnd_modal">ОК</button><button class="btn_scnd_modal close_scnd_modal">Отмена</button></div>');
+        
+        $('.close_scnd_modal').click(function(){
+            $('.mod_gray_screen').remove();
+            $('.mod_modal').remove();
+
+            $('.choose_table_modal > #' + clicked_id).css('background-color', 'white');
+            clicked_id = null;
+            helper_id = null;
+        });
+        
+        $('.accept_scnd_modal').click(function(){
+            callback();
+        });
     }
 
     //employee
@@ -134,56 +197,14 @@ $(function() {
                     if(position_min_age) {
                         let emp_age = calc_age(persons[clicked_id].birthday);
                         if(emp_age<position_min_age || emp_age>position_max_age) {
-                            $('.modal').append('<div class="gray_screen_modal mod_gray_screen"></div>');
-                            $('.modal').append('<div class="modal mod_modal"><div class="text_scnd_modal">Выбранный сотрудник не подходит по возрасту. Вы уверены, что хотите выбрать этого сотрудника?</div><button class="btn_scnd_modal accept_scnd_modal">ОК</button><button class="btn_scnd_modal btn_modal close_scnd_modal">Отмена</button></div>');
-                            
-                            $('.close_scnd_modal').click(function(){
-                                $('.mod_gray_screen').remove();
-                                $('.mod_modal').remove();
-
-                                $('.choose_table_modal > #' + clicked_id).css('background-color', 'white');
-                                clicked_id = null;
-                                helper_id = null;
-                            });
-                            
-                            $('.accept_scnd_modal').click(function(){
-                                $('.employee_selection_cell').empty();
-                                $('.employee_selection_cell').append('<div><div class="text_selection">' + persons[clicked_id].lastname + ' ' + persons[clicked_id].middlename + ' ' + persons[clicked_id].firstname + '</div><button class="btn_X btn_X_employee">X</button></div>');
-                                employee_prev_id = clicked_id;
-                                employee_age = calc_age(persons[clicked_id].birthday);
-                                $(".btn_X_employee").click(function(){
-                                    $('.employee_selection_cell').empty();
-                                    employee_prev_id = null;
-                                    employee_age = null;
-                                });
-                                $('.modal').remove();
-                                $('.gray_screen_modal').remove();
+                            secondModal('Выбранный сотрудник не подходит по возрасту. Вы уверены, что хотите выбрать этого сотрудника?', function() {
+                                add_employee_sel(persons);
                             });
                         } else {
-                            $('.employee_selection_cell').empty();
-                            $('.employee_selection_cell').append('<div><div class="text_selection">' + persons[clicked_id].lastname + ' ' + persons[clicked_id].middlename + ' ' + persons[clicked_id].firstname + '</div><button class="btn_X btn_X_employee">X</button></div>');
-                            employee_prev_id = clicked_id;
-                            employee_age = calc_age(persons[clicked_id].birthday);
-                            $(".btn_X_employee").click(function(){
-                                $('.employee_selection_cell').empty();
-                                employee_prev_id = null;
-                                employee_age = null;
-                            });
-                            $('.modal').remove();
-                            $('.gray_screen_modal').remove();
+                            add_employee_sel(persons);
                         }
                     } else {
-                        $('.employee_selection_cell').empty();
-                            $('.employee_selection_cell').append('<div><div class="text_selection">' + persons[clicked_id].lastname + ' ' + persons[clicked_id].middlename + ' ' + persons[clicked_id].firstname + '</div><button class="btn_X btn_X_employee">X</button></div>');
-                            employee_prev_id = clicked_id;
-                            employee_age = calc_age(persons[clicked_id].birthday);
-                            $(".btn_X_employee").click(function(){
-                                $('.employee_selection_cell').empty();
-                                employee_prev_id = null;
-                                employee_age = null;
-                            });
-                            $('.modal').remove();
-                            $('.gray_screen_modal').remove();
+                        add_employee_sel(persons);
                     }
                 }  else {
                     $('.modal').remove();
@@ -216,62 +237,14 @@ $(function() {
                     //check age
                     if(employee_prev_id) {
                         if(positions[clicked_id].min_age > employee_age || positions[clicked_id].max_age < employee_age) {
-                            $('.modal').append('<div class="gray_screen_modal mod_gray_screen"></div>');
-                            $('.modal').append('<div class="modal mod_modal"><div class="text_scnd_modal">Выбранная должность не подходит по возрасту сотруднику. Вы уверены, что хотите выбрать эту должность?</div><button class="btn_scnd_modal accept_scnd_modal">ОК</button><button class="btn_scnd_modal close_scnd_modal">Отмена</button></div>');
-                            
-                            $('.close_scnd_modal').click(function(){
-                                $('.mod_gray_screen').remove();
-                                $('.mod_modal').remove();
-
-                                $('.choose_table_modal > #' + clicked_id).css('background-color', 'white');
-                                clicked_id = null;
-                                helper_id = null;
-                            });
-                            
-                            $('.accept_scnd_modal').click(function(){
-                                $('.position_selection_cell').empty();
-                                $('.position_selection_cell').append('<div><div class="text_selection">' + positions[clicked_id].name + '</div><button class="btn_X btn_X_position">X</button></div>');
-                                position_prev_id = clicked_id;
-                                position_min_age = positions[clicked_id].min_age;
-                                position_max_age = positions[clicked_id].max_age;
-                                $(".btn_X_position").click(function(){
-                                    $('.position_selection_cell').empty();
-                                    position_prev_id = null;
-                                    position_min_age = null;
-                                    position_max_age = null;
-                                });
-                                $('.modal').remove();
-                                $('.gray_screen_modal').remove();
+                            secondModal('Выбранная должность не подходит по возрасту сотруднику. Вы уверены, что хотите выбрать эту должность?', function() {
+                                add_position_sel(positions);
                             });
                         } else {
-                            $('.position_selection_cell').empty();
-                            $('.position_selection_cell').append('<div><div class="text_selection">' + positions[clicked_id].name + '</div><button class="btn_X btn_X_position">X</button></div>');
-                            position_prev_id = clicked_id;
-                            position_min_age = positions[clicked_id].min_age;
-                            position_max_age = positions[clicked_id].max_age;
-                            $(".btn_X_position").click(function(){
-                                $('.position_selection_cell').empty();
-                                position_prev_id = null;
-                                position_min_age = null;
-                                position_max_age = null;
-                            });
-                            $('.modal').remove();
-                            $('.gray_screen_modal').remove();
+                            add_position_sel(positions);
                         }
                     } else {
-                        $('.position_selection_cell').empty();
-                        $('.position_selection_cell').append('<div><div class="text_selection">' + positions[clicked_id].name + '</div><button class="btn_X btn_X_position">X</button></div>');
-                        position_prev_id = clicked_id;
-                        position_min_age = positions[clicked_id].min_age;
-                        position_max_age = positions[clicked_id].max_age;
-                        $(".btn_X_position").click(function(){
-                            $('.position_selection_cell').empty();
-                            position_prev_id = null;
-                            position_min_age = null;
-                            position_max_age = null;
-                        });
-                        $('.modal').remove();
-                        $('.gray_screen_modal').remove();
+                        add_position_sel(positions);
                     }
                 } else {
                     $('.modal').remove();
@@ -282,6 +255,27 @@ $(function() {
 
         cancel_btns();
     });
+
+    /**
+     * Logic for 'ok' button for choose organization and subdivision.
+     * @param {String} selection_cell class of cell for inserting
+     * @param {String} text_selection pasted text
+     * @param {String} btx_X_name class for needed button X
+     * @param {String} org_or_sub this func for 'org' or 'sub'?
+     */
+    function org_and_subs(selection_cell, text_selection, btx_X_name, org_or_sub) {
+        $(selection_cell).empty();
+        $(selection_cell).append('<div><div class="text_selection">' + text_selection + '</div><button class="btn_X '+btx_X_name+'">X</button></div>');
+        if(org_or_sub == 'org')
+            organization_prev_id = clicked_id;
+        else subdivision_prev_id = clicked_id;
+        $("."+btx_X_name+"").click(function(){
+            $(selection_cell).empty();
+            if(org_or_sub == 'org')
+                organization_prev_id = null;
+            else subdivision_prev_id = null;
+        });
+    }
 
     //organization
     $(".choose_organization_btn").click(function() {
@@ -300,13 +294,7 @@ $(function() {
             //ok btn
             $(".ok_btn_modal").click(function(){
                 if(clicked_id != null) {
-                    $('.organization_selection_cell').empty();
-                    $('.organization_selection_cell').append('<div><div class="text_selection">' + organizations[clicked_id].name + '</div><button class="btn_X btn_X_organization">X</button></div>');
-                    organization_prev_id = clicked_id;
-                    $(".btn_X_organization").click(function(){
-                        $('.organization_selection_cell').empty();
-                        organization_prev_id = null;
-                    });
+                    org_and_subs('.organization_selection_cell', organizations[clicked_id].name, 'btn_X_organization', 'org');
                 }
                 $('.modal').remove();
                 $('.gray_screen_modal').remove();
@@ -333,13 +321,7 @@ $(function() {
             //ok btn
             $(".ok_btn_modal").click(function(){
                 if(clicked_id != null) {
-                    $('.subdivision_selection_cell').empty();
-                    $('.subdivision_selection_cell').append('<div><div class="text_selection">' + subdivisions[clicked_id].name + '</div><button class="btn_X btn_X_subdivision">X</button></div>');
-                    subdivision_prev_id = clicked_id;
-                    $(".btn_X_subdivision").click(function(){
-                        $('.subdivision_selection_cell').empty();
-                        subdivision_prev_id = null;
-                    });
+                    org_and_subs('.subdivision_selection_cell', subdivisions[clicked_id].name, 'btn_X_subdivision', 'sub');
                 }
                 $('.modal').remove();
                 $('.gray_screen_modal').remove();

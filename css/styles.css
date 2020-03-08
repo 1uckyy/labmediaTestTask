@@ -20,6 +20,7 @@ button {
 .selection_cell {
     display: flex;
     flex-direction: column;
+    height: 40px;
 }
 
 .text_selection {
@@ -28,6 +29,10 @@ button {
 
 .btn_X {
     margin-left: 5px;
+}
+
+.choices_table tr {
+
 }
 
 /*modal wnd*/
